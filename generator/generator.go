@@ -1,6 +1,7 @@
 package generator
 
 import (
+	_ "embed"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -8,6 +9,9 @@ import (
 	"path/filepath"
 	"text/template"
 )
+
+//go:embed test.tmpl
+var testTemplate string
 
 type FuncData struct {
 	FuncName string
@@ -45,7 +49,8 @@ func GenerateTests(dir string) error {
 }
 
 func writeTestFile(dir string, funcs []FuncData) error {
-	tmpl, err := template.ParseFiles("templates/test.tmpl")
+	// Load the embedded template
+	tmpl, err := template.New("test").Parse(testTemplate)
 	if err != nil {
 		return err
 	}
