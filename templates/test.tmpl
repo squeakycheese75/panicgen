@@ -1,0 +1,23 @@
+package {{ (index . 0).Package }}_test
+
+import (
+    "testing"
+    "{{ (index . 0).Package }}"
+)
+
+func SafeRun(t *testing.T, fn func()) {
+    defer func() {
+        if r := recover(); r != nil {
+            t.Fatalf("panic occurred: %v", r)
+        }
+    }()
+    fn()
+}
+
+{{ range . }}
+func Test_{{ .FuncName }}_NoPanic(t *testing.T) {
+    SafeRun(t, func() {
+        {{ .Package }}.{{ .FuncName }}() // TODO: insert realistic args
+    })
+}
+{{ end }}
